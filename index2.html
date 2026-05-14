@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Ferrenan | Cortadora & Dobladora</title>
+    <style>
+
+        body {
+            background-image: url("ferreteria.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Georgia, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #2c2c2c;
+        }
+
+        /* ===== BANNER ===== */
+
+        .banner {
+            background-color: rgba(28, 28, 28, 0.65);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 5px solid rgb(232, 26, 35);
+            text-align: center;
+            padding: 45px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            color: #f0ebe4;
+        }
+
+        .logo {
+            width: 400px;
+            max-width: 90%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.08);
+        }
+
+        /* ===== MENÚ ===== */
+
+        nav {
+            background-color: #2b2b2b;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: inline-flex;
+            flex-wrap: wrap;
+        }
+        nav ul li {
+            display: inline;
+        }
+        nav ul li a {
+            display: inline-block;
+            color: #d4c9be;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 15px 22px;
+            border-radius: 8px;
+            transition:
+                background-color 0.3s ease,
+                transform 0.3s ease,
+                box-shadow 0.3s ease;
+        }
+        nav ul li a:hover {
+            background-color: rgb(254, 77, 78);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 15px rgba(254,77,78,0.4);
+        }
+
+        /* ===== CONTENEDORES ===== */
+
+        section,
+        article,
+        aside,
+        div {
+            max-width: 950px;
+            margin: 28px auto;
+            padding: 30px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            border-bottom: 3px solid rgb(254,77,78);
+            padding-bottom: 10px;
+            color: #1c1c1c;
+        }
+        h3 {
+            color: rgb(254,77,78);
+        }
+        p {
+            line-height: 1.8;
+        }
+        blockquote {
+            background: #faf6f1;
+            border-left: 5px solid rgb(254,77,78);
+            padding: 15px;
+            font-style: italic;
+        }
+
+        /* ===== IMÁGENES ===== */
+
+        .img-float {
+            float: left;
+            width: 260px;
+            max-width: 40%;
+            margin-right: 20px;
+            border-radius: 6px;
+            border: 3px solid rgb(254,77,78);
+        }
+        .img-seccion {
+            width: 100%;
+            max-width: 500px;
+            display: block;
+            margin: auto;
+            border-radius: 6px;
+            transition: transform 0.4s ease;
+        }
+
+        .img-seccion:hover {
+            transform: scale(1.05);
+        }
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* ===== TABLAS ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #444;
+        }
+        th {
+            background-color: rgb(254,77,78);
+            color: white;
+            padding: 12px;
+        }
+        td {
+            background: white;
+            padding: 10px;
+        }
+        /* ===== FOOTER ===== */
+        footer {
+            background-color: #1c1c1c;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        /* ===== IFRAME ===== */
+
+        iframe {
+            border: none;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="banner">
+        <img src="LogoFerrenan.png"
+             alt="Logo Ferrenan"
+             class="logo">
+    </header>
+    <!-- MENÚ -->
+    <nav>
+        <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#productos">Productos</a></li>
+            <li><a href="#glosario">Glosario</a></li>
+            <li><a href="#tablas">Tablas</a></li>
+            <li><a href="#iframe">Iframe</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+    </nav>
+    <!-- INICIO -->
+    <section id="inicio"
+             class="clearfix">
+        <h2>Inicio</h2>
+        <img src="ferreteriapordentro.png"
+             alt="Interior de la empresa"
+             class="img-float">
+        <blockquote>
+            "Las mejores herramientas para tus proyectos."
+        </blockquote>
+        <p>
+            Bienvenido a Ferrenan. Contamos con herramientas y materiales
+            de excelente calidad para construcción y remodelación.
+        </p>
+        <p>
+            Más de 20 años ofreciendo productos confiables y atención personalizada.
+        </p>
+    </section>
+    <!-- PRODUCTOS -->
+    <article id="productos">
+        <h2>Productos</h2>
+        <!-- IMAGEN CON HIPERVÍNCULO -->
+        <a href="https://www.google.com"
+           target="_blank">
+            <img src="ferreteria.jpg"
+                 alt="Productos Ferrenan"
+                 class="img-seccion">
+        </a>
+        <!-- UL / LI -->
+        <h3>Herramientas disponibles</h3>
+        <ul>
+            <li>Martillos</li>
+            <li>Taladros</li>
+            <li>Pulidoras</li>
+            <li>Destornilladores</li>
+        </ul>
+        <!-- OL / LI -->
+        <h3>Pasos para comprar</h3>
+        <ol>
+            <li>Elegir producto</li>
+            <li>Consultar disponibilidad</li>
+            <li>Realizar pago</li>
+            <li>Recibir producto</li>
+        </ol>
+        <!-- LISTAS ANIDADAS -->
+        <h3>Categorías</h3>
+        <ul>
+            <li>Herramientas Manuales
+                <ul>
+                    <li>Martillos</li>
+                    <li>Alicates</li>
+                </ul>
+            </li>
+            <li>Herramientas Eléctricas
+                <ul>
+                    <li>Taladros</li>
+                    <li>Pulidoras</li>
+                </ul>
+            </li>
+        </ul>
+    </article>
+    <!-- DL DT DD -->
+    <section id="glosario">
+        <h2>Glosario</h2>
+        <dl>
+            <dt>Taladro</dt>
+            <dd>
+                Herramienta utilizada para perforar superficies.
+            </dd>
+            <dt>Martillo</dt>
+            <dd>
+                Herramienta utilizada para golpear.
+            </dd>
+        </dl>
+    </section>
+    <!-- ALIGN -->
+    <section>
+        <h2>Ejemplos ALIGN</h2>
+        <div style="text-align:left;">
+            <p>Texto LEFT</p>
+        </div>
+        <div style="text-align:center;">
+            <p>Texto CENTER</p>
+        </div>
+        <div style="text-align:right;">
+            <p>Texto RIGHT</p>
+        </div>
+        <div style="vertical-align: top;">
+            <p>Ejemplo TOP</p>
+        </div>
+    </section>
+    <!-- TABLAS -->
+    <section id="tablas">
+        <h2>Tabla de Productos</h2>
+        <table>
+            <tr>
+                <th rowspan="2">Producto</th>
+                <th colspan="2">Información</th>
+            </tr>
+            <tr>
+                <th>Precio</th>
+                <th>Estado</th>
+            </tr>
+            <tr>
+                <td>Taladro</td>
+                <td>$250.000</td>
+                <td>Disponible</td>
+            </tr>
+            <tr>
+                <td>Martillo</td>
+                <td>$30.000</td>
+                <td>Disponible</td>
+            </tr>
+        </table>
+    </section>
+    <!-- DIV -->
+    <div>
+        <h2>Ejemplo DIV</h2>
+        <p>
+            Este contenido está organizado utilizando la etiqueta DIV.
+        </p>
+    </div>
+    <!-- MAP -->
+    <section>
+        <h2>Mapa Interactivo</h2>
+        <img src="ferreteria.jpg"
+            alt="Mapa interactivo"
+            usemap="#mapa"
+            width="500">
+        <map name="mapa">
+            <area shape="rect"
+                coords="0,0,250,250"
+                href="https://www.google.com"
+                alt="Google">
+            <area shape="rect"
+                coords="251,0,500,250"
+                href="https://www.youtube.com"
+                alt="YouTube">
+        </map>
+    </section>
+    <!-- IFRAME -->
+    <section id="iframe">
+        <h2>Ubicación</h2>
+        <iframe
+            title="Mapa de ubicación"
+            src="https://www.google.com/maps"
+            width="100%"
+            height="400">
+        </iframe>
+    </section>
+    <!-- TABLA DINÁMICA -->
+    <section>
+        <h2>Tabla Dinámica</h2>
+        <input type="number"
+            id="filas"
+            placeholder="Filas">
+        <input type="number"
+            id="columnas"
+            placeholder="Columnas">
+        <button type="button"
+                onclick="crearTabla()">
+            Crear Tabla
+        </button>
+        <div id="resultadoTabla"></div>
+    </section>
+    <!-- CONTACTO -->
+    <section id="contacto">
+        <h2>Contacto</h2>
+        <p>Teléfono: 3001234567</p>
+        <p>Email: ferrenan@gmail.com</p>
+        <p>Bogotá - Colombia</p>
+    </section>
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Ferrenan</p>
+        <p>Bogotá - Colombia</p>
+    </footer>
+    <!-- JAVASCRIPT -->
+    <script>
+        function crearTabla() {
+            let filas = document.getElementById("filas").value;
+            let columnas = document.getElementById("columnas").value;
+            let tabla = "<table>";
+            for(let i = 0; i < filas; i++) {
+                tabla += "<tr>";
+                for(let j = 0; j < columnas; j++) {
+                    tabla += "<td>Dato</td>";
+                }
+                tabla += "</tr>";
+            }
+            tabla += "</table>";
+            document.getElementById("resultadoTabla").innerHTML = tabla;
+        }
+    </script>
+</body>
+</html>
