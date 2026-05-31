@@ -12,7 +12,7 @@ from database import engine, SessionLocal
 # Si no existe la base de datos, se crea automáticamente.
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="To-Do API")
+app = FastAPI(title="Ferretería El Constructor — API de Gestión de Tareas")
 
 # Habilitar CORS.
 app.add_middleware(
