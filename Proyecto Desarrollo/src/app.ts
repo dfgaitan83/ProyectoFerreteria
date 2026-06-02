@@ -4,6 +4,8 @@
 // ============================================================
 import ferreteriaUrl          from './assets/ferreteria.jpg'
 import ferreteriaPordentroUrl from './assets/ferreteriapordentro.png'
+import { getTasks, createTask, updateTask, deleteTask } from './services/api'
+import type { Task } from './services/api'
 
 (function (): void {
     "use strict";
@@ -163,6 +165,32 @@ import ferreteriaPordentroUrl from './assets/ferreteriapordentro.png'
             .iframe-main { display:flex; height:420px; }
             .iframe-sidebar { width:190px; min-width:190px; height:100%; border:none; border-right:2px solid #c8b8a8; }
             .iframe-content { flex:1; height:100%; border:none; }
+            .tareas-search{width:100%;padding:.55rem 1rem;margin-bottom:1rem;border:1px solid #d4c0b0;border-radius:3px;outline:none;background:#faf6f1;color:#2c2c2c;font-size:.93em;box-sizing:border-box;}
+            .tareas-search:focus{border-color:#9b3a10;}
+            .tareas-stats{display:flex;gap:1.5rem;margin-bottom:.5rem;font-size:.9em;}
+            .tareas-form{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;}
+            .tareas-form input{flex:1;min-width:150px;padding:.5rem;border-radius:3px;border:1px solid #d4c0b0;background:#faf6f1;color:#2c2c2c;font-size:.93em;}
+            .tareas-form input:focus{outline:none;border-color:#9b3a10;}
+            .tareas-edit-form{background:#faf6f1;padding:1rem;border-radius:4px;margin-bottom:1rem;border-left:4px solid #c8850a;}
+            .tareas-edit-form input[type="text"]{display:block;width:100%;margin-bottom:.5rem;padding:.5rem;border-radius:3px;border:1px solid #d4c0b0;background:#fff;color:#2c2c2c;font-size:.93em;box-sizing:border-box;}
+            .tareas-edit-form input[type="text"]:focus{outline:none;border-color:#9b3a10;}
+            .tareas-checkbox-label{display:flex;align-items:center;gap:.5rem;margin:.5rem 0;font-size:.93em;color:#3a3530;}
+            .tareas-form-buttons{display:flex;gap:.5rem;margin-top:.5rem;}
+            .tareas-list{display:flex;flex-direction:column;gap:.8rem;}
+            .tarea-card{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:#faf6f1;border:1px solid #d4c0b0;border-top:3px solid #9b3a10;border-radius:0 0 4px 4px;}
+            .tarea-card.completada{opacity:.55;border-top-color:#c8850a;}
+            .tarea-card.completada .tarea-titulo{text-decoration:line-through;color:#5a4a40;}
+            .tarea-titulo{margin-bottom:.25rem;color:#6b2a08;font-weight:700;font-size:.95em;}
+            .tarea-desc{font-size:.88em;color:#5a4a40;margin:0;}
+            .tarea-botones{display:flex;gap:.4rem;flex-shrink:0;}
+            .btn-tarea-editar{padding:6px 14px;background:#c8850a;color:#1c1c1c;border:none;border-radius:3px;cursor:pointer;font-weight:600;font-size:.85em;letter-spacing:.3px;}
+            .btn-tarea-editar:hover{background:#a06b00;}
+            .btn-tarea-eliminar{padding:6px 14px;background:#8b2500;color:#f0ebe4;border:none;border-radius:3px;cursor:pointer;font-weight:600;font-size:.85em;letter-spacing:.3px;}
+            .btn-tarea-eliminar:hover{background:#6b1a00;}
+            .btn-tarea-guardar{padding:6px 18px;background:#9b3a10;color:#f0ebe4;border:none;border-radius:3px;cursor:pointer;font-weight:600;font-size:.85em;letter-spacing:.3px;}
+            .btn-tarea-guardar:hover{background:#7a2e08;}
+            .btn-tarea-cancelar{padding:6px 14px;background:#5a4a40;color:#f0ebe4;border:none;border-radius:3px;cursor:pointer;font-weight:600;font-size:.85em;letter-spacing:.3px;}
+            .btn-tarea-cancelar:hover{background:#3a3530;}
         `;
         document.head.appendChild(s);
     }
@@ -194,6 +222,7 @@ import ferreteriaPordentroUrl from './assets/ferreteriapordentro.png'
             { label: "Glosario",    href: "#glosario",     target: "_self" },
             { label: "Promociones", href: "#promociones",  target: "_self" },
             { label: "IFRAME",      href: "#iframe-demo",  target: "_self" },
+            { label: "Tareas",      href: "#tareas",       target: "_self" },
             { label: "Contacto",    href: "#contacto",     target: "_self" },
         ];
 
@@ -716,6 +745,180 @@ import ferreteriaPordentroUrl from './assets/ferreteriapordentro.png'
     }
 
     // ============================================================
+    // GESTIÓN DE TAREAS — estado y renderizado
+    // ============================================================
+
+    let gTareas: Task[] = [];
+    let gTareasSearch = "";
+    let gTareaEditando: Task | null = null;
+    let gTareasListRef: HTMLElement | null = null;
+    let gTareasStatsRef: HTMLElement | null = null;
+    let gEditFormRef: HTMLElement | null = null;
+
+    function renderizarStats(): void {
+        if (!gTareasStatsRef) return;
+        const filtradas = gTareas.filter(t =>
+            t.title.toLowerCase().includes(gTareasSearch.toLowerCase())
+        );
+        const pendientes = filtradas.filter(t => !t.completed).length;
+        const completadas = filtradas.filter(t => t.completed).length;
+        gTareasStatsRef.innerHTML =
+            `<span style="color:#9b3a10">Pendientes: <strong>${pendientes}</strong></span>` +
+            `&nbsp;&nbsp;<span style="color:#5a4a40">Completadas: <strong>${completadas}</strong></span>`;
+    }
+
+    function renderizarListaTareas(): void {
+        if (!gTareasListRef) return;
+        renderizarStats();
+        const filtradas = gTareas.filter(t =>
+            t.title.toLowerCase().includes(gTareasSearch.toLowerCase())
+        );
+        gTareasListRef.innerHTML = "";
+        if (filtradas.length === 0) {
+            gTareasListRef.appendChild(el("p", {
+                style: "color:#5a4a40;font-style:italic;text-align:center;padding:1rem;",
+            }, "No hay tareas registradas. Agregue una arriba."));
+            return;
+        }
+        filtradas.forEach(task => {
+            const card = el("div", {
+                class: "tarea-card" + (task.completed ? " completada" : ""),
+            });
+            const info = el("div", {});
+            ap(info,
+                el("p", { class: "tarea-titulo" }, task.title),
+                el("p", { class: "tarea-desc" }, task.description || "")
+            );
+            const botones = el("div", { class: "tarea-botones" });
+            const btnEditar = el("button", { class: "btn-tarea-editar", type: "button" }, "Editar");
+            btnEditar.addEventListener("click", () => {
+                gTareaEditando = { ...task };
+                renderizarFormEdicion();
+            });
+            const btnEliminar = el("button", { class: "btn-tarea-eliminar", type: "button" }, "Eliminar");
+            btnEliminar.addEventListener("click", async () => {
+                await deleteTask(task.id);
+                gTareas = await getTasks();
+                renderizarListaTareas();
+            });
+            ap(botones, btnEditar, btnEliminar);
+            ap(card, info, botones);
+            gTareasListRef!.appendChild(card);
+        });
+    }
+
+    function renderizarFormEdicion(): void {
+        if (!gEditFormRef) return;
+        gEditFormRef.innerHTML = "";
+        if (!gTareaEditando) return;
+        const formEdit = el("div", { class: "tareas-edit-form" });
+        ap(formEdit, el("h3", {
+            style: "color:#6b2a08;margin-bottom:.6rem;border:none;padding-left:0;",
+        }, "Editando tarea"));
+        const inpTit = document.createElement("input");
+        inpTit.type = "text";
+        inpTit.value = gTareaEditando.title;
+        inpTit.addEventListener("input", () => {
+            if (gTareaEditando) gTareaEditando = { ...gTareaEditando, title: inpTit.value };
+        });
+        const inpDesc = document.createElement("input");
+        inpDesc.type = "text";
+        inpDesc.value = gTareaEditando.description || "";
+        inpDesc.addEventListener("input", () => {
+            if (gTareaEditando) gTareaEditando = { ...gTareaEditando, description: inpDesc.value };
+        });
+        const lbl = document.createElement("label");
+        lbl.className = "tareas-checkbox-label";
+        const chk = document.createElement("input");
+        chk.type = "checkbox";
+        chk.checked = gTareaEditando.completed;
+        chk.addEventListener("change", () => {
+            if (gTareaEditando) gTareaEditando = { ...gTareaEditando, completed: chk.checked };
+        });
+        lbl.appendChild(chk);
+        lbl.appendChild(document.createTextNode(" Marcar como completada"));
+        const botonesEdit = el("div", { class: "tareas-form-buttons" });
+        const btnGuardar = el("button", { class: "btn-tarea-guardar", type: "button" }, "Guardar cambios");
+        btnGuardar.addEventListener("click", async () => {
+            if (!gTareaEditando) return;
+            await updateTask(gTareaEditando.id, {
+                title: gTareaEditando.title,
+                description: gTareaEditando.description || "",
+                completed: gTareaEditando.completed,
+            });
+            gTareaEditando = null;
+            gTareas = await getTasks();
+            renderizarListaTareas();
+            renderizarFormEdicion();
+        });
+        const btnCancelar = el("button", { class: "btn-tarea-cancelar", type: "button" }, "Cancelar");
+        btnCancelar.addEventListener("click", () => {
+            gTareaEditando = null;
+            renderizarFormEdicion();
+        });
+        ap(botonesEdit, btnGuardar, btnCancelar);
+        ap(formEdit, inpTit, inpDesc, lbl, botonesEdit);
+        gEditFormRef.appendChild(formEdit);
+    }
+
+    function construirGestionTareas(): HTMLElement {
+        const section = el("section", { id: "tareas" });
+        ap(section, el("h2", {}, "Gestión de Tareas Operativas"));
+
+        ap(section, el("h3", {}, "Buscar tarea"));
+        const inpBuscar = document.createElement("input");
+        inpBuscar.type = "text";
+        inpBuscar.className = "tareas-search";
+        inpBuscar.placeholder = "Buscar por nombre de tarea...";
+        inpBuscar.addEventListener("input", () => {
+            gTareasSearch = inpBuscar.value;
+            renderizarListaTareas();
+        });
+        section.appendChild(inpBuscar);
+
+        const statsDiv = el("div", { class: "tareas-stats" });
+        gTareasStatsRef = statsDiv;
+        section.appendChild(statsDiv);
+
+        ap(section, el("h3", { style: "margin-top:1.2rem;" }, "Nueva tarea"));
+        const formDiv = el("div", { class: "tareas-form" });
+        const inpNuevoTitulo = document.createElement("input");
+        inpNuevoTitulo.type = "text";
+        inpNuevoTitulo.placeholder = "Ej: Revisar stock de tornillos Stanley...";
+        const inpNuevaDesc = document.createElement("input");
+        inpNuevaDesc.type = "text";
+        inpNuevaDesc.placeholder = "Ej: Bodega nivel 2, sección B";
+        const btnAgregar = el("button", { class: "btn-tarea-guardar", type: "button" }, "Agregar");
+        btnAgregar.addEventListener("click", async () => {
+            const title = inpNuevoTitulo.value.trim();
+            if (!title) return;
+            await createTask({ title, description: inpNuevaDesc.value.trim(), completed: false });
+            inpNuevoTitulo.value = "";
+            inpNuevaDesc.value = "";
+            gTareas = await getTasks();
+            renderizarListaTareas();
+        });
+        ap(formDiv, inpNuevoTitulo, inpNuevaDesc, btnAgregar);
+        section.appendChild(formDiv);
+
+        const editContainer = el("div", {});
+        gEditFormRef = editContainer;
+        section.appendChild(editContainer);
+
+        section.appendChild(crearHR());
+        ap(section, el("h3", {}, "Tareas operativas"));
+        const listaDiv = el("div", { class: "tareas-list" });
+        gTareasListRef = listaDiv;
+        section.appendChild(listaDiv);
+
+        getTasks()
+            .then(tasks => { gTareas = tasks; renderizarListaTareas(); })
+            .catch(() => { gTareas = []; renderizarListaTareas(); });
+
+        return section;
+    }
+
+    // ============================================================
     // INICIALIZAR — punto de entrada
     // ============================================================
 
@@ -748,6 +951,8 @@ import ferreteriaPordentroUrl from './assets/ferreteriapordentro.png'
             construirPromociones(),
             crearHR(),
             construirIframeDemo(),
+            crearHR(),
+            construirGestionTareas(),
             crearHR(),
             construirContacto(),
             crearBR(),
